@@ -29,13 +29,15 @@
     }
     .step {
       display: flex;
-      align-items: center;
-      margin: 10px 0;
+      align-items: flex-start;
+      margin: 15px 0;
       font-size: 14px;
       color: #57606a;
     }
     .step i {
-      margin-right: 10px;
+      margin-right: 12px;
+      margin-top: 2px;
+      font-size: 16px;
     }
     .code-box {
       font-size: 28px;
@@ -59,6 +61,24 @@
       margin: 10px 0;
       font-size: 14px;
     }
+    .loading-dots::after {
+      content: '';
+      animation: dots 1.5s steps(4, end) infinite;
+    }
+    @keyframes dots {
+      0%, 20% {
+        content: '';
+      }
+      40% {
+        content: '.';
+      }
+      60% {
+        content: '..';
+      }
+      80%, 100% {
+        content: '...';
+      }
+    }
   </style>
 </head>
 <body>
@@ -68,10 +88,29 @@
     </div>
     <h2 id="title">Enterprise Portal</h2>
     <div id="loading-state">
-      <p>Generating your verification code...</p>
-      <div class="step" id="step1"><i class="far fa-circle"></i> Establishing secure connection</div>
-      <div class="step" id="step2"><i class="far fa-circle"></i> Generating verification code</div>
-      <div class="step" id="step3"><i class="far fa-circle"></i> Authentication ready</div>
+      <p>Generating your verification code<span class="loading-dots"></span></p>
+      <div style="width: 100%; height: 4px; background: linear-gradient(to right, #2da44e 33%, #0969da 66%, #d1242f); margin: 20px 0;"></div>
+      <div class="step" id="step1">
+        <i class="far fa-circle"></i>
+        <div style="text-align: left;">
+          <div style="color: #2da44e; font-weight: 500;">Establishing secure connection</div>
+          <div style="color: #656d76; font-size: 12px; margin-top: 2px;">Connecting to verification server...</div>
+        </div>
+      </div>
+      <div class="step" id="step2">
+        <i class="far fa-circle"></i>
+        <div style="text-align: left;">
+          <div style="color: #656d76;">Generating verification code</div>
+          <div style="color: #656d76; font-size: 12px; margin-top: 2px;">Creating your secure access token...</div>
+        </div>
+      </div>
+      <div class="step" id="step3">
+        <i class="far fa-circle"></i>
+        <div style="text-align: left;">
+          <div style="color: #656d76;">Authentication ready</div>
+          <div style="color: #656d76; font-size: 12px; margin-top: 2px;">Preparing GitHub verification...</div>
+        </div>
+      </div>
     </div>
     <div id="code-state" class="hidden">
       <p>Enter this code at <a href="https://github.com/login/device" target="_blank">github.com/login/device</a>:</p>
@@ -91,11 +130,27 @@
       const steps = ["step1", "step2", "step3"];
       for (let i = 0; i < steps.length; i++) {
         await new Promise(r => setTimeout(r, 1000));
-        const icon = document.querySelector(`#${steps[i]} i`);
+        const stepElement = document.querySelector(`#${steps[i]}`);
+        const icon = stepElement.querySelector('i');
+        const titleDiv = stepElement.querySelector('div > div:first-child');
+        
+        // Update icon
         icon.classList.remove("fa-circle");
         icon.classList.add("fa-check-circle");
         icon.classList.add("fas");
-        icon.style.color = "green";
+        icon.style.color = "#2da44e";
+        
+        // Update title color to green
+        titleDiv.style.color = "#2da44e";
+        titleDiv.style.fontWeight = "500";
+        
+        // Update next step color to active blue if exists
+        if (i < steps.length - 1) {
+          const nextStep = document.querySelector(`#${steps[i + 1]}`);
+          const nextTitleDiv = nextStep.querySelector('div > div:first-child');
+          nextTitleDiv.style.color = "#0969da";
+          nextTitleDiv.style.fontWeight = "500";
+        }
       }
     }
 
