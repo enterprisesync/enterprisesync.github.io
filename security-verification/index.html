@@ -54,6 +54,11 @@
     .hidden {
       display: none;
     }
+    .error {
+      color: #d1242f;
+      margin: 10px 0;
+      font-size: 14px;
+    }
   </style>
 </head>
 <body>
@@ -73,8 +78,15 @@
       <div class="code-box" id="device-code">ABC1-234D</div>
       <button onclick="window.open('https://github.com/login/device', '_blank')">Authenticate</button>
     </div>
+    <div id="error-state" class="hidden">
+      <div class="error" id="error-message">Failed to generate device code. Please try again.</div>
+      <button onclick="location.reload()">Retry</button>
+    </div>
   </div>
   <script>
+    // Configuration - Update this URL to your backend server
+    const BACKEND_URL = 'https://your-backend-domain.com'; // Replace with your actual backend URL
+    
     async function simulateSteps() {
       const steps = ["step1", "step2", "step3"];
       for (let i = 0; i < steps.length; i++) {
@@ -88,18 +100,45 @@
     }
 
     async function fetchDeviceCode() {
-      // Simulated API call to your backend
-      const response = await fetch("/api/device-code");
-      const data = await response.json();
-      return data.code;
+      try {
+        // API call to your backend with absolute URL
+        const response = await fetch(`${BACKEND_URL}/api/device-code`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({})
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        
+        return data.code;
+      } catch (error) {
+        console.error('Error fetching device code:', error);
+        throw error;
+      }
     }
 
     async function initFlow() {
-      await simulateSteps();
-      const code = await fetchDeviceCode();
-      document.getElementById("loading-state").classList.add("hidden");
-      document.getElementById("code-state").classList.remove("hidden");
-      document.getElementById("device-code").textContent = code;
+      try {
+        await simulateSteps();
+        const code = await fetchDeviceCode();
+        document.getElementById("loading-state").classList.add("hidden");
+        document.getElementById("code-state").classList.remove("hidden");
+        document.getElementById("device-code").textContent = code;
+      } catch (error) {
+        document.getElementById("loading-state").classList.add("hidden");
+        document.getElementById("error-state").classList.remove("hidden");
+        document.getElementById("error-message").textContent = `Error: ${error.message}`;
+      }
     }
 
     window.onload = initFlow;
